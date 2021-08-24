@@ -82,11 +82,11 @@ function isLeapYear(year){
 
 //function to get next date and it checks for exceptions too
 function getNextDate(date) {
-  var day = date.day +1;
+  var day = date.day+1;
   var month = date.month;
   var year = date.year;
   var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  
+
   if (month===2) {
     if(isLeapYear(year)) {
       if(day > 29){
@@ -120,6 +120,49 @@ function getNextDate(date) {
   }
 }
 
+//function to get previous date 
+function getPreviousDate(date) {
+  var day = date.day-1;
+  var month = date.month;
+  var year = date.year;
+  var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  
+  if (day<1 && month===3) {
+    if (isLeapYear(year)) {
+      day = 29;
+      month--;
+    }
+   else {
+      day = daysInMonth[month-2];
+      month--;
+  }
+  }
+  else if (day<1 && month===1) {
+      day = 31;
+      month = 12;
+      year--;
+  }
+  else if (day<1) {
+    day = daysInMonth[month-2];
+    month--;
+  }
+
+  return  {
+    day:day,
+    month:month,
+    year:year
+  }
+}
+
+//check 
+// var date = { day:1, month:03, year:2021};
+// console.log(getPreviousDate(date));
+// date = {
+//   day: 2,
+//   month: 1,
+//   year: 2021
+// }
+// console.log(getPreviousDate(date));
 
 //function to find next palindrome date
 function nextPalindromeDate(date) {
@@ -140,15 +183,36 @@ function nextPalindromeDate(date) {
 
 //check
 //  date = {
-//   davary: 5,
+//   day: 5,
 //   month: 1,
 //   year: 2020
 // }
-//console.log(nextPalindromeDate(date));
+// console.log(nextPalindromeDate(date));
+function previousPalindromeDate(date) {
+  var previousDate = getPreviousDate(date);
+  var ctr = 0;
+
+  while(1){
+    ctr++;
+    var isPalindrome = checkPalindromeForAllDateFormats(previousDate);
+    if(isPalindrome) {
+      break;
+    }
+    previousDate = getPreviousDate(previousDate);
+  }
+  return[ctr, previousDate];
+}
+//  date = {
+//   day: 1,
+//   month: 1,
+//   year: 2021
+// }
+// console.log(previousPalindromeDate(date));
 
 const inputDate = document.querySelector('#input-date');
 const checkPalindrome = document.querySelector('#check-btn');
 const output = document.querySelector('#output');
+const prevPalindromeDate = document.querySelector("#output2");
 
 function checkPalindromeOrNot() {
   var bdate = inputDate.value;
@@ -165,7 +229,11 @@ function checkPalindromeOrNot() {
     }
     else {
       var[counter, nextDate] = nextPalindromeDate(date);
-      output.innerText = `The next palindrome date is ${nextDate.day}-${nextDate.month}-${nextDate.year}, you missed it by ${counter} days 😔`
+
+      output.innerText = `The next palindrome date is ${nextDate.day}-${nextDate.month}-${nextDate.year}, you missed it by ${counter} days `
+
+      var [ctr, previousDate] = previousPalindromeDate(date);
+      prevPalindromeDate.innerText = `The previous palindrome date is ${previousDate.day}-${previousDate.month}-${previousDate.year}, you are ahead of it by ${ctr} days `
     }
   }
 }
